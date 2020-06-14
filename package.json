@@ -11,11 +11,17 @@
     "appId": "com.electron.hfs",
     "productName": "HFS",
     "generateUpdatesFilesForAllChannels": true,
+    "directories": {
+      "buildResources": "./resources",
+      "app": "./app",
+      "output": "./dist"
+    },
     "compression": "maximum",
     "electronVersion": "9.0.3",
     "asar": true,
     "asarUnpack": [
-      "**/*.node"
+      "**/*.node",
+      "**/*.ico"
     ],
     "win": {
       "target": [

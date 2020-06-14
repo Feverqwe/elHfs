@@ -1,4 +1,4 @@
-const {app, Menu, Tray, dialog, shell} = require('electron');
+const {app, Menu, Tray, dialog, shell, nativeImage} = require('electron');
 const express = require('express');
 const expressIndex = require('express-index');
 const compression = require('compression');
@@ -97,7 +97,30 @@ function createServer(path, address, port) {
 }
 
 function setTrayMenu() {
-  const tray = new Tray(Path.join(__dirname, '../assets/icons/48.png'));
+  const icons = [{
+    path: Path.join(__dirname, '../assets/icons/icon.ico'), scaleFactor: 1.0,
+  }, {
+    path: Path.join(__dirname, '../assets/icons/16px.png'), scaleFactor: 1.0,
+  }, {
+    path: Path.join(__dirname, '../assets/icons/32px.png'), scaleFactor: 2.0,
+  }];
+
+  let iconImage;
+  for (const {path, scaleFactor = 1.0} of icons) {
+    if (/\.ico/.test(path)) {
+      if (process.platform !== 'win32') continue;
+      iconImage = nativeImage.createFromPath(path);
+      break;
+    } else {
+      if (!iconImage) {
+        iconImage = nativeImage.createEmpty();
+      }
+      const buffer = Fs.readFileSync(path);
+      iconImage.addRepresentation({buffer, scaleFactor});
+    }
+  }
+
+  const tray = new Tray(iconImage);
 
   tray.setContextMenu(getContextMenu());
 }
