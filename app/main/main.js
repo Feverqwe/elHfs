@@ -5,12 +5,12 @@ const compression = require('compression');
 const Fs = require('fs');
 const Path = require('path');
 
-const configPath = Path.join(app.getAppPath(), 'config.json');
+const configPath = Path.join(app.getPath('userData'), 'config.json');
 
 const defaultConfig = {
   port: 80,
   address: '0.0.0.0',
-  public: app.getAppPath(),
+  public: app.getPath('exe'),
 };
 
 const config = {...defaultConfig};
