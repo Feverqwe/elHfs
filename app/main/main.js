@@ -1,6 +1,6 @@
 const {app, Menu, Tray, dialog, shell, nativeImage, powerSaveBlocker} = require('electron');
 const express = require('express');
-const expressIndex = require('express-index');
+const expressIndex = require('./vendor/express-index');
 const compression = require('compression');
 const Fs = require('fs');
 const Path = require('path');
@@ -10,7 +10,7 @@ const configPath = Path.join(app.getPath('userData'), 'config.json');
 const defaultConfig = {
   port: 80,
   address: '0.0.0.0',
-  public: app.getPath('exe'),
+  public: Path.basename(app.getPath('exe')),
 };
 
 const config = {...defaultConfig};
@@ -104,16 +104,21 @@ function createServer(path, address, port) {
   });
 }
 
+let timeoutId = null;
 let noSleepId = null;
 function startNoSleep() {
+  clearTimeout(timeoutId);
   if (noSleepId === null) {
     noSleepId = powerSaveBlocker.start('prevent-app-suspension');
   }
 }
 function stopNoSleep() {
   if (noSleepId !== null) {
-    powerSaveBlocker.stop(noSleepId);
-    noSleepId = null;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      powerSaveBlocker.stop(noSleepId);
+      noSleepId = null;
+    }, 3 * 60 * 1000);
   }
 }
 

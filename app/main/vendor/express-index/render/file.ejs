@@ -1,0 +1,21 @@
+<%
+var icon_file   = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAOCAYAAAAbvf3sAAAAYUlEQVR4nGNkYGBgqKmp+c+AB7S0tDCiCNTU1PzHBdavX/8f2UAmfCbDgLGxMdwVRGlA1sRCSGFAQACcffbsWeJtgAE6afj+/TtRir9//z5o/UAKYGRgYGAoLi7Gm/iQAQC+qjWGF5ecJwAAAABJRU5ErkJggg==";
+var icon_folder = "data:image/gif;base64,R0lGODlhEAAOALMIAJdaH+C6eJ9oJMOHNK1zLf/inv/Sg////////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAQAA4AAARAEMlJq7136IEnOeBBdENhGkGwadQQviE3lWZtAxRhE3zvIzpT0HYaCQwGAnLJHCEASabU+VRKl1SJYMvtdr6ICAA7";
+
+function getIcon( type ){
+    switch(type){
+        case "dir":
+            return icon_folder;
+        default:
+            return icon_file;
+    }
+}
+
+%>
+
+<tr>
+    <td data-alt="[<%= file.type %>]"><img src="<%= getIcon(file.type) %>" alt=""></td>
+    <td><a href="<%= file.name %>"><%= file.name %></a></td>
+    <td><%= file.ctimeStr %></td>
+    <td><%= file.size ? file.size : '-' %></td>
+</tr>
