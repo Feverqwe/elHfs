@@ -1,4 +1,4 @@
-const {app, Menu, Tray, dialog, shell, nativeImage} = require('electron');
+const {app, Menu, Tray, dialog, shell, nativeImage, powerSaveBlocker} = require('electron');
 const express = require('express');
 const expressIndex = require('express-index');
 const compression = require('compression');
@@ -92,8 +92,27 @@ function createServer(path, address, port) {
     connections.push(socket);
     socket.once('close', function () {
       removeFromArrayItem(connections, socket);
+      if (connections.length === 0) {
+        stopNoSleep();
+      }
     });
+    if (connections.length === 1) {
+      startNoSleep();
+    }
   });
+}
+
+let noSleepId = null;
+function startNoSleep() {
+  if (noSleepId === null) {
+    noSleepId = powerSaveBlocker.start('prevent-app-suspension');
+  }
+}
+function stopNoSleep() {
+  if (noSleepId !== null) {
+    powerSaveBlocker.stop(noSleepId);
+    noSleepId = null;
+  }
 }
 
 function setTrayMenu() {
