@@ -100,9 +100,9 @@ function setTrayMenu() {
   const icons = [{
     path: Path.join(__dirname, '../assets/icons/icon.ico'), scaleFactor: 1.0,
   }, {
-    path: Path.join(__dirname, '../assets/icons/16px.png'), scaleFactor: 1.0,
+    path: Path.join(__dirname, '../assets/icons/16.png'), scaleFactor: 1.0,
   }, {
-    path: Path.join(__dirname, '../assets/icons/32px.png'), scaleFactor: 2.0,
+    path: Path.join(__dirname, '../assets/icons/32.png'), scaleFactor: 2.0,
   }];
 
   let iconImage;
