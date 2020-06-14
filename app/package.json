@@ -2,6 +2,7 @@
   "name": "el_hfs",
   "version": "1.0.0",
   "description": "Electron http file server",
+  "productName": "HFS",
   "author": {
     "name": "Anton V"
   },

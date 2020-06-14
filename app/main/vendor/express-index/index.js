@@ -23,10 +23,7 @@ function expressIndex(root, options = {}) {
     const rootPath = normalize(resolve(root) + sep);
 
     return (req, res, next) => {
-        const dir = req.path;
-        if (typeof dir !== "string") {
-            return res.sendStatus(400);
-        }
+        const dir = decodeURIComponent(req.path);
 
         const path = normalize(join(rootPath, dir));
         if (path.indexOf('\0') !== -1) {
@@ -64,6 +61,7 @@ function expressIndex(root, options = {}) {
 
             const file = {
                 name,
+                url: encodeURIComponent(name),
                 type: stat.isDirectory() ? 'dir' : extname(name).toLowerCase().substr(1),
                 ctime: stat.ctime,
                 ctimeStr: dateStr(stat.ctime),

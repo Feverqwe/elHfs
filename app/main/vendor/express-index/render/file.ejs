@@ -15,7 +15,7 @@ function getIcon( type ){
 
 <tr>
     <td data-alt="[<%= file.type %>]"><img src="<%= getIcon(file.type) %>" alt=""></td>
-    <td><a href="<%= file.name %>"><%= file.name %></a></td>
+    <td><a href="<%= file.url %>"><%= file.name %></a></td>
     <td><%= file.ctimeStr %></td>
     <td><%= file.size ? file.size : '-' %></td>
 </tr>
