@@ -15,6 +15,8 @@ const defaultConfig = {
 
 const config = {...defaultConfig};
 
+let trayIcon = null;
+
 (() => {
   if (!app.requestSingleInstanceLock()) {
     return app.quit();
@@ -22,8 +24,8 @@ const config = {...defaultConfig};
 
   app.setAppUserModelId('com.electron.hfs');
 
-  app.on('ready', () => {
-    setTrayMenu();
+  return app.whenReady().then(() => {
+    trayIcon = setTrayMenu();
 
     reload();
   });
@@ -142,6 +144,8 @@ function setTrayMenu() {
   const tray = new Tray(iconImage);
 
   tray.setContextMenu(getContextMenu());
+
+  return tray;
 }
 
 function getContextMenu() {
