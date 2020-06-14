@@ -140,7 +140,7 @@ function getContextMenu() {
   });
 
   items.push({
-    label: 'Reload',
+    label: 'Reload config',
     click: () => {
       reload();
     }
