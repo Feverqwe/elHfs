@@ -21,7 +21,7 @@
     "asar": true,
     "asarUnpack": [
       "**/*.node",
-      "**/icons/*"
+      "**/*.ico"
     ],
     "win": {
       "target": [
