@@ -1,0 +1,40 @@
+{
+  "name": "el_hfs",
+  "version": "1.0.0",
+  "description": "Electron http file server",
+  "scripts": {
+    "start": "electron ./app --enable-logging",
+    "buildWin": "electron-builder build --ia32 --project ./",
+    "buildMac": "electron-builder build --mac --project ./"
+  },
+  "build": {
+    "appId": "com.electron.hfs",
+    "productName": "HFS",
+    "generateUpdatesFilesForAllChannels": true,
+    "compression": "maximum",
+    "electronVersion": "9.0.3",
+    "asar": true,
+    "asarUnpack": [
+      "**/*.node"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "artifactName": "${name}_setup_${version}.${ext}"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "dmg": {}
+  },
+  "devDependencies": {
+    "electron": "^9.0.4",
+    "electron-builder": "^22.7.0"
+  }
+}

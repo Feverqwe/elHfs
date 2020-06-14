@@ -1,0 +1,16 @@
+{
+  "name": "el_hfs",
+  "version": "1.0.0",
+  "description": "Electron http file server",
+  "productName": "HFS",
+  "author": {
+    "name": "Anton V"
+  },
+  "main": "./main/main.js",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "electron-updater": "4.3.1",
+    "express": "^4.17.1",
+    "express-index": "^0.2.3"
+  }
+}
