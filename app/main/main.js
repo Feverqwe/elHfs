@@ -1,6 +1,6 @@
 const {app, Menu, Tray, dialog, shell, nativeImage, powerSaveBlocker} = require('electron');
 const express = require('express');
-const expressIndex = require('./vendor/express-index');
+const expressIndex = require('./folder-index');
 const compression = require('compression');
 const Fs = require('fs');
 const Path = require('path');

@@ -1,14 +1,47 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Folder from "./components/Folder";
+import green from "@material-ui/core/colors/green";
+import ThemeProvider from "@material-ui/styles/ThemeProvider";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 
 const rootStore = window.ROOT_STORE || {
   dir: '/',
   isRoot: true,
-  files: [],
+  files: [
+    {
+      name: 'test',
+      type: 'dir',
+      ctime: Date.now(),
+      size: 0,
+    },
+    {
+      name: 'a.txt',
+      type: 'txt',
+      ctime: Date.now(),
+      size: 10,
+    },
+    {
+      name: 'b.txt',
+      type: 'txt',
+      ctime: Date.now(),
+      size: 50,
+    },
+  ],
 };
 
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    type: 'dark',
+  }
+});
+
 ReactDOM.render(
-  <Folder store={rootStore}/>,
+  <ThemeProvider theme={theme}>
+    <CssBaseline/>
+    <Folder store={rootStore}/>
+  </ThemeProvider>,
   document.getElementById('root')
 );

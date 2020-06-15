@@ -1,57 +1,86 @@
 import * as React from "react";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import FolderIcon from '@material-ui/icons/Folder';
 
-const icon_back = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNWRHWFIAAAFKSURBVDhPY6AZ+A8EDKGrmKFc0gDPtv//5XcDDYjfzwEVIhLU/2eSAmqU3wU1IO0MF1SGCJB2hlV7z7//clt/Q/C2P/8liTYAqDn+8Pf/0ss+oWC5bX8x8cYfB+VWfc6Vm/tCCRhSjEBn72fJOfj5v/j050RhsRkvrknMeNEuNeulAdgA4eprK4Vqrv4Xqr2GH1dd+S/ceOu/SNeDayKd99pFu+5DDOCtuCYs1nTzqHDz7f/oWKr9DgaWbr19TarldrtUy00DYFwDvQAEYq13xWU67x4Dmvofhrlb7/3X670/QW/qvT5krDvtQbbO1Hv2VpMfSoE1w4BIywNJ2UkPj4v1P/4Pw5L1T0mIRiCQmPhMVGryk4Pi018AA+zFf8mZJBoAAkBNItKzXh6TWvaGPANAQGTGK0m1llcF8vPvk5iUkQEshGkLGBgADLf8U4fFVOgAAAAASUVORK5CYII=';
-const icon_file = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAOCAYAAAAbvf3sAAAAYUlEQVR4nGNkYGBgqKmp+c+AB7S0tDCiCNTU1PzHBdavX/8f2UAmfCbDgLGxMdwVRGlA1sRCSGFAQACcffbsWeJtgAE6afj+/TtRir9//z5o/UAKYGRgYGAoLi7Gm/iQAQC+qjWGF5ecJwAAAABJRU5ErkJggg==";
-const icon_folder = "data:image/gif;base64,R0lGODlhEAAOALMIAJdaH+C6eJ9oJMOHNK1zLf/inv/Sg////////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAQAA4AAARAEMlJq7136IEnOeBBdENhGkGwadQQviE3lWZtAxRhE3zvIzpT0HYaCQwGAnLJHCEASabU+VRKl1SJYMvtdr6ICAA7";
+const filesize = require('filesize');
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+  },
+}));
 
 const Folder = React.memo(({store}) => {
-  return (
-    <>
-      <h4>Index of {store.dir}</h4>
+  const classes = useStyles();
 
-      <table>
-        <tbody>
-        {store.isRoot && (
-          <tr>
-            <td>
-              <img src={icon_back} alt="[../]"/>
-            </td>
-            <td>
-              <a style={{
-                textDecoration: 'none',
-              }} href={'../'}>../</a>
-            </td>
-            <td/>
-            <td/>
-          </tr>
-        )}
-        {store.files.map((file) => {
-          return (
-            <tr>
-              <td data-alt={`[${file.type}]`}>
-                <img src={getIcon(file.type)} alt=""/>
-              </td>
-              <td>
-                <a href={file.url}>{file.name}</a>
-              </td>
-              <td>{file.ctimeStr}</td>
-              <td>{file.size}</td>
-            </tr>
-          );
-        })}
-        </tbody>
-      </table>
-    </>
+  return (
+    <List
+      component="nav"
+      subheader={
+        <ListSubheader component="div">
+          {store.dir}
+        </ListSubheader>
+      }
+      className={classes.root}
+    >
+      {!store.isRoot && (
+        <ListItem button component={'a'} href={'../'}>
+          <ListItemIcon>
+            <ArrowBackIcon/>
+          </ListItemIcon>
+          <ListItemText primary="Back"/>
+        </ListItem>
+      )}
+      {store.files.map((file) => {
+        return <File key={file.type + '_' + file.name} file={file}/>
+      })}
+    </List>
   );
 });
 
-function getIcon( type ) {
-  switch (type) {
-    case "dir":
-      return icon_folder;
-    default:
-      return icon_file;
-  }
+const File = React.memo(({file: {size, ctime, name, type}}) => {
+  const sizeStr = React.useMemo(() => {
+    let hSize = '';
+    try {
+      if (size > 0) {
+        hSize = filesize(size);
+      }
+    } catch (err) {
+      // pass
+    }
+    return hSize;
+  }, [size]);
+
+  const dateStr = React.useMemo(() => {
+    return dateToStr(new Date(ctime));
+  }, [ctime]);
+
+  return (
+    <ListItem button component={'a'} href={encodeURIComponent(name)}>
+      <ListItemIcon>
+        {type === 'dir' && (
+          <FolderIcon/>
+        )}
+        {type !== 'dir' && (
+          <InsertDriveFileIcon/>
+        )}
+      </ListItemIcon>
+      <ListItemText primary={name} secondary={sizeStr + ' ' + dateStr}/>
+    </ListItem>
+  );
+});
+
+function dateToStr(date) {
+  const dateStr = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(v => (v < 10 ? '0' : '') + v).join('-');
+  const timeStr = [date.getHours(), date.getMinutes(), date.getSeconds()].map(v => (v < 10 ? '0' : '') + v).join('-');
+  return `${dateStr} ${timeStr}`;
 }
 
 export default Folder;

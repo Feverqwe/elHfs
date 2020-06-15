@@ -5,7 +5,7 @@ const Path = require('path');
 const cssnano = require('cssnano');
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 
-const outputPath = Path.join(__dirname, './dist/');
+const outputPath = Path.join(__dirname, '../app/main/template/folder/');
 const isProduction = process.argv[process.argv.indexOf('--mode') + 1] === 'production';
 
 console.log('isProduction', isProduction);
