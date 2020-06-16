@@ -28,6 +28,18 @@ const rootStore = window.ROOT_STORE || {
       ctime: Date.now(),
       size: 50,
     },
+    {
+      name: 'test.mp4',
+      type: 'txt',
+      ctime: Date.now(),
+      size: 550 * 1024 * 1024,
+    },
+    {
+      name: 'test2.mp4',
+      type: 'txt',
+      ctime: Date.now(),
+      size: 1545 * 1024 * 1024,
+    },
   ],
 };
 

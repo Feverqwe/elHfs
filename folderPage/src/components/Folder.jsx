@@ -8,6 +8,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import FolderIcon from '@material-ui/icons/Folder';
+import MovieIcon from '@material-ui/icons/Movie';
+import AudiotrackIcon from '@material-ui/icons/Audiotrack';
 
 const filesize = require('filesize');
 
@@ -15,7 +17,17 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
+  pathLine: {
+    lineHeight: 'normal',
+    wordBreak: 'break-all',
+    padding: '6px',
+    backgroundColor: theme.palette.background.paper,
+  }
 }));
+
+const iconStyle = {
+  minWidth: '42px',
+};
 
 const Folder = React.memo(({store}) => {
   const classes = useStyles();
@@ -24,7 +36,7 @@ const Folder = React.memo(({store}) => {
     <List
       component="nav"
       subheader={
-        <ListSubheader component="div">
+        <ListSubheader component="div" className={classes.pathLine}>
           {store.dir}
         </ListSubheader>
       }
@@ -32,7 +44,7 @@ const Folder = React.memo(({store}) => {
     >
       {!store.isRoot && (
         <ListItem button component={'a'} href={'../'}>
-          <ListItemIcon>
+          <ListItemIcon style={iconStyle}>
             <ArrowBackIcon/>
           </ListItemIcon>
           <ListItemText primary="Back"/>
@@ -45,18 +57,33 @@ const Folder = React.memo(({store}) => {
   );
 });
 
+const useStylesFile = makeStyles((theme) => ({
+  name: {
+    wordBreak: 'break-word',
+  },
+  subLine: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  }
+}));
+
 const File = React.memo(({file: {size, ctime, name, type}}) => {
+  const classes = useStylesFile();
+
   const sizeStr = React.useMemo(() => {
-    let hSize = '';
+    let hSize = null;
     try {
-      if (size > 0) {
-        hSize = filesize(size);
+      if (type !== 'dir') {
+        const [value, symbol] = filesize(size, {
+          output: 'array'
+        });
+        hSize = `${parseInt(value * 10, 10) / 10} ${symbol}`;
       }
     } catch (err) {
       // pass
     }
     return hSize;
-  }, [size]);
+  }, [size, type]);
 
   const dateStr = React.useMemo(() => {
     return dateToStr(new Date(ctime));
@@ -64,15 +91,21 @@ const File = React.memo(({file: {size, ctime, name, type}}) => {
 
   return (
     <ListItem button component={'a'} href={encodeURIComponent(name)}>
-      <ListItemIcon>
-        {type === 'dir' && (
+      <ListItemIcon style={iconStyle}>
+        {type === 'dir' ? (
           <FolderIcon/>
-        )}
-        {type !== 'dir' && (
+        ) : ['mp4', 'mkv', 'avi'].includes(type) ? (
+          <MovieIcon/>
+        ) : ['mp3', 'm4a', 'flac', 'aac'].includes(type) ? (
+          <AudiotrackIcon/>
+        ) : (
           <InsertDriveFileIcon/>
         )}
       </ListItemIcon>
-      <ListItemText primary={name} secondary={sizeStr + ' ' + dateStr}/>
+      <ListItemText primary={name} secondary={<div className={classes.subLine}>
+        <div>{dateStr}</div>
+        <div>{sizeStr}</div>
+      </div>} secondaryTypographyProps={{component: 'div'}} className={classes.name}/>
     </ListItem>
   );
 });
