@@ -10,7 +10,10 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import FolderIcon from '@material-ui/icons/Folder';
 import MovieIcon from '@material-ui/icons/Movie';
 import AudiotrackIcon from '@material-ui/icons/Audiotrack';
+import ImageIcon from '@material-ui/icons/Image';
+import DescriptionIcon from '@material-ui/icons/Description';
 
+const mime = require('mime');
 const filesize = require('filesize');
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +54,7 @@ const Folder = React.memo(({store}) => {
         </ListItem>
       )}
       {store.files.map((file) => {
-        return <File key={file.type + '_' + file.name} file={file}/>
+        return <File key={file.isDir + '_' + file.name} file={file}/>
       })}
     </List>
   );
@@ -67,13 +70,13 @@ const useStylesFile = makeStyles((theme) => ({
   }
 }));
 
-const File = React.memo(({file: {size, ctime, name, type}}) => {
+const File = React.memo(({file: {size, ctime, name, isDir}}) => {
   const classes = useStylesFile();
 
   const sizeStr = React.useMemo(() => {
     let hSize = null;
     try {
-      if (type !== 'dir') {
+      if (!isDir) {
         const [value, symbol] = filesize(size, {
           output: 'array'
         });
@@ -83,24 +86,55 @@ const File = React.memo(({file: {size, ctime, name, type}}) => {
       // pass
     }
     return hSize;
-  }, [size, type]);
+  }, [size, isDir]);
 
   const dateStr = React.useMemo(() => {
     return dateToStr(new Date(ctime));
   }, [ctime]);
 
+  const Icon = React.useMemo(() => {
+    if (isDir) {
+      return (
+        <FolderIcon/>
+      );
+    }
+
+    const mimeType = mime.getType(name);
+    const m = /^([^\/]+)/.exec(mimeType);
+    const generalType = m && m[1];
+    switch (generalType) {
+      case 'video': {
+        return (
+          <MovieIcon/>
+        );
+      }
+      case 'audio': {
+        return (
+          <AudiotrackIcon/>
+        );
+      }
+      case 'image': {
+        return (
+          <ImageIcon/>
+        );
+      }
+      case 'text': {
+        return (
+          <DescriptionIcon/>
+        );
+      }
+      default: {
+        return (
+          <InsertDriveFileIcon/>
+        );
+      }
+    }
+  }, [name, isDir]);
+
   return (
     <ListItem button component={'a'} href={encodeURIComponent(name)}>
       <ListItemIcon style={iconStyle}>
-        {type === 'dir' ? (
-          <FolderIcon/>
-        ) : ['mp4', 'mkv', 'avi'].includes(type) ? (
-          <MovieIcon/>
-        ) : ['mp3', 'm4a', 'flac', 'aac'].includes(type) ? (
-          <AudiotrackIcon/>
-        ) : (
-          <InsertDriveFileIcon/>
-        )}
+        {Icon}
       </ListItemIcon>
       <ListItemText primary={name} secondary={<div className={classes.subLine}>
         <div>{dateStr}</div>

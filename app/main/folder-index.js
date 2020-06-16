@@ -43,7 +43,7 @@ function expressIndex(root) {
 
             const file = {
                 name,
-                type: stat.isDirectory() ? 'dir' : Path.extname(name).toLowerCase().substr(1),
+                isDir: stat.isDirectory(),
                 ctime: stat.ctime.getTime(),
                 size: stat.size,
             };
@@ -55,8 +55,8 @@ function expressIndex(root) {
             return a === b ? 0 : a > b ? -1 : 1;
         });
 
-        dirList.sort(({type: a}, {type: b}) => {
-            return a === b ? 0 : a === 'dir' ? -1 : 1;
+        dirList.sort(({isDir: a}, {isDir: b}) => {
+            return a === b ? 0 : a ? -1 : 1;
         });
 
         const body = template.replace('<script id="root_store"></script>', `<script id="root_store">window.ROOT_STORE=${escapeHtmlInJson(JSON.stringify({
