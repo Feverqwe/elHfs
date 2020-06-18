@@ -167,7 +167,13 @@ function getContextMenu() {
     }
   });
 
+  let configItems = null;
   items.push({
+    label: 'Config',
+    submenu: configItems = []
+  });
+
+  configItems.push({
     label: 'Set public path',
     click: () => {
       dialog.showOpenDialog({
@@ -182,7 +188,7 @@ function getContextMenu() {
     }
   });
 
-  items.push({
+  configItems.push({
     label: 'Edit config',
     click: () => {
       ensureConfig();
@@ -190,7 +196,7 @@ function getContextMenu() {
     }
   });
 
-  items.push({
+  configItems.push({
     label: 'Reload config',
     click: () => {
       reload();
