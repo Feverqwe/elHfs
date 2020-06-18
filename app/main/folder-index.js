@@ -16,7 +16,7 @@ function expressIndex(root) {
         if (path.indexOf('\0') !== -1) {
             return res.sendStatus(400);
         }
-        if ((path + Path.posix.sep).substr(0, rootPath.length) !== rootPath) {
+        if ((path + Path.sep).substr(0, rootPath.length) !== rootPath) {
             return res.sendStatus(403);
         }
 
