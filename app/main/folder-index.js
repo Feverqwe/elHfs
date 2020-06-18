@@ -1,6 +1,7 @@
 const Fs = require('fs');
 const Path = require('path');
 const escapeHtmlInJson = require('./tools/escapeHtmlInJson');
+const parallel = require('./tools/parallel');
 
 function expressIndex(root) {
     if (!root) throw new TypeError('Root path required');
@@ -8,7 +9,7 @@ function expressIndex(root) {
     const rootPath = Path.normalize(Path.resolve(root) + Path.sep);
     const template = Fs.readFileSync(Path.join(__dirname, './template/folder/folder.html')).toString();
 
-    return (req, res, next) => {
+    return async (req, res, next) => {
         const dir = decodeURIComponent(req.path);
 
         const path = Path.normalize(Path.join(rootPath, dir));
@@ -21,7 +22,7 @@ function expressIndex(root) {
 
         let dirFiles = null;
         try {
-            dirFiles = Fs.readdirSync(path);
+            dirFiles = await Fs.promises.readdir(path);
         } catch (err) {
             // pass
         }
@@ -31,10 +32,11 @@ function expressIndex(root) {
         }
 
         const dirList = [];
-        dirFiles.forEach((name) => {
+
+        await parallel(10, dirFiles, async (name) => {
             let stat = null;
             try {
-                stat = Fs.statSync(Path.join(path, name));
+                stat = await Fs.promises.stat(Path.join(path, name));
             } catch (err) {
                 // pass
             }
