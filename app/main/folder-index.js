@@ -61,11 +61,15 @@ function expressIndex(root) {
             return a === b ? 0 : a ? -1 : 1;
         });
 
-        const body = template.replace('<script id="root_store"></script>', `<script id="root_store">window.ROOT_STORE=${escapeHtmlInJson(JSON.stringify({
+        const rootStore = {
             dir,
             isRoot: rootPath === path,
             files: dirList,
-        }))}</script>`);
+        };
+
+        const body = template
+          .replace('{{TITLE}}', `Index of ${escapeHtmlInJson(dir)}`)
+          .replace('<script id="root_store"></script>', `<script id="root_store">window.ROOT_STORE=${escapeHtmlInJson(JSON.stringify(rootStore))}</script>`);
 
         res.send(body);
     };
