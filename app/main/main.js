@@ -1,6 +1,6 @@
 const {app, Menu, Tray, dialog, shell, nativeImage, powerSaveBlocker} = require('electron');
 const express = require('express');
-const expressIndex = require('./folder-index');
+const folderIndex = require('./folder-index');
 const compression = require('compression');
 const Fs = require('fs');
 const Path = require('path');
@@ -87,7 +87,7 @@ function createServer(path, address, port) {
   app.use(compression());
 
   app.use('/', express.static(path));
-  app.use('/', expressIndex(path, { theme : 'darko' }));
+  app.use('/', folderIndex(path));
 
   server = app.listen(port, address);
   server.on('connection', (socket) => {
