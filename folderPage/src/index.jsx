@@ -56,9 +56,18 @@ const theme = createMuiTheme({
   }
 });
 
+const Favicon = () => {
+  return ReactDOM.createPortal(<>
+    <link rel="icon" type="image/png" href={require('../../app/assets/icons/16.png').default} sizes="16x16"/>
+    <link rel="icon" type="image/png" href={require('../../app/assets/icons/32.png').default} sizes="32x32"/>
+    <link rel="icon" type="image/png" href={require('../../app/assets/icons/96.png').default} sizes="96x96"/>
+  </>, document.head);
+};
+
 ReactDOM.render(
   <ThemeProvider theme={theme}>
     <CssBaseline/>
+    <Favicon/>
     <Folder store={rootStore}/>
   </ThemeProvider>,
   document.getElementById('root')
