@@ -53,14 +53,6 @@ function expressIndex(root) {
             dirList.push(file);
         });
 
-        dirList.sort(({ctime: a}, {ctime: b}) => {
-            return a === b ? 0 : a > b ? -1 : 1;
-        });
-
-        dirList.sort(({isDir: a}, {isDir: b}) => {
-            return a === b ? 0 : a ? -1 : 1;
-        });
-
         const rootStore = {
             dir,
             isRoot: rootPath === path,

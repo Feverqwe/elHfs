@@ -12,6 +12,10 @@ import MovieIcon from '@material-ui/icons/Movie';
 import AudiotrackIcon from '@material-ui/icons/Audiotrack';
 import ImageIcon from '@material-ui/icons/Image';
 import DescriptionIcon from '@material-ui/icons/Description';
+import IconButton from "@material-ui/core/IconButton";
+import SortIcon from '@material-ui/icons/Sort';
+import Box from "@material-ui/core/Box";
+import SortChooseDialog from "./SortChooseDialog";
 
 const mime = require('mime');
 const filesize = require('filesize');
@@ -21,10 +25,15 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   pathLine: {
+    display: 'flex',
+    alignItems: 'center',
     lineHeight: 'normal',
     wordBreak: 'break-all',
     padding: '6px',
     backgroundColor: theme.palette.background.paper,
+  },
+  pathLinePath: {
+    flexGrow: 1,
   }
 }));
 
@@ -34,29 +43,69 @@ const iconStyle = {
 
 const Folder = React.memo(({store}) => {
   const classes = useStyles();
+  const [files] = React.useState(store.files);
+  const [sortKey, setSortKey] = React.useState(getOption('sort', ['ctime', false]));
+  const [showSortDialog, setShowSortDialog] = React.useState(false);
+
+  const changeSort = React.useCallback((keyDir) => {
+    setSortKey(keyDir);
+    setOption('sort', keyDir);
+  }, []);
+
+  const sortedFiles = React.useMemo(() => {
+    const [key, d] = sortKey;
+    const [r1, r2] = d ? [1, -1] : [-1, 1];
+    const result = files.slice(0);
+    result.sort(({[key]: a}, {[key]: b}) => {
+      return a === b ? 0 : a > b ? r1 : r2;
+    });
+    result.sort(({isDir: a}, {isDir: b}) => {
+      return a === b ? 0 : a ? -1 : 1;
+    });
+    return result;
+  }, [files, sortKey]);
+
+  const handleSortBtn = React.useCallback((e) => {
+    e.preventDefault();
+    setShowSortDialog(true);
+  }, []);
+
+  const handleCloseSortDialog = React.useCallback(() => {
+    setShowSortDialog(false);
+  }, []);
 
   return (
-    <List
-      component="nav"
-      subheader={
-        <ListSubheader component="div" className={classes.pathLine}>
-          {store.dir}
-        </ListSubheader>
-      }
-      className={classes.root}
-    >
-      {!store.isRoot && (
-        <ListItem button component={'a'} href={'../'}>
-          <ListItemIcon style={iconStyle}>
-            <ArrowBackIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Back"/>
-        </ListItem>
+    <>
+      <List
+        component="nav"
+        subheader={
+          <ListSubheader component="div" className={classes.pathLine}>
+            <Box className={classes.pathLinePath}>
+              {store.dir}
+            </Box>
+            <IconButton onClick={handleSortBtn} size="small">
+              <SortIcon fontSize="inherit" />
+            </IconButton>
+          </ListSubheader>
+        }
+        className={classes.root}
+      >
+        {!store.isRoot && (
+          <ListItem button component={'a'} href={'../'}>
+            <ListItemIcon style={iconStyle}>
+              <ArrowBackIcon/>
+            </ListItemIcon>
+            <ListItemText primary="Back"/>
+          </ListItem>
+        )}
+        {sortedFiles.map((file) => {
+          return <File key={file.isDir + '_' + file.name} file={file}/>
+        })}
+      </List>
+      {showSortDialog && (
+        <SortChooseDialog sortKey={sortKey} changeSort={changeSort} onClose={handleCloseSortDialog} />
       )}
-      {store.files.map((file) => {
-        return <File key={file.isDir + '_' + file.name} file={file}/>
-      })}
-    </List>
+    </>
   );
 });
 
@@ -148,6 +197,21 @@ function dateToStr(date) {
   const dateStr = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(v => (v < 10 ? '0' : '') + v).join('-');
   const timeStr = [date.getHours(), date.getMinutes(), date.getSeconds()].map(v => (v < 10 ? '0' : '') + v).join('-');
   return `${dateStr} ${timeStr}`;
+}
+
+function getOption(key, defaultValue) {
+  let value = null;
+  try {
+    value = JSON.parse(localStorage.getItem(key));
+  } catch (err) {}
+  if (value === null) {
+    value = defaultValue;
+  }
+  return value;
+}
+
+function setOption(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
 export default Folder;
