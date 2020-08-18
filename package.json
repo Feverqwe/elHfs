@@ -17,7 +17,6 @@
       "output": "./dist"
     },
     "compression": "maximum",
-    "electronVersion": "9.2.0",
     "asar": true,
     "asarUnpack": [
       "**/*.node",
