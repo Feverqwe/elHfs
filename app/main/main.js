@@ -9,7 +9,7 @@ const configPath = Path.join(app.getPath('userData'), 'config.json');
 
 const defaultConfig = {
   port: 80,
-  address: '0.0.0.0',
+  address: '',
   public: Path.basename(app.getPath('exe')),
 };
 
