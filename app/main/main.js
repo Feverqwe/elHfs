@@ -9,8 +9,8 @@ const configPath = Path.join(app.getPath('userData'), 'config.json');
 
 const defaultConfig = {
   port: 80,
-  address: '',
-  public: Path.basename(app.getPath('exe')),
+  address: null,
+  public: Path.dirname(app.getPath('exe')),
 };
 
 const config = {...defaultConfig};
@@ -160,7 +160,7 @@ function getContextMenu() {
     label: 'Open',
     click: () => {
       let address = config.address;
-      if (address === '0.0.0.0') {
+      if (!address || address === '0.0.0.0') {
         address = '127.0.0.1';
       }
       shell.openExternal(`http://${address}:${config.port}/`);
