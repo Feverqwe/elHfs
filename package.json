@@ -39,7 +39,7 @@
     "dmg": {}
   },
   "devDependencies": {
-    "electron": "^10.1.5",
+    "electron": "^11.0.3",
     "electron-builder": "^22.9.1"
   }
 }
