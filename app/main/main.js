@@ -197,6 +197,14 @@ function getContextMenu() {
   });
 
   configItems.push({
+    label: 'Open config path',
+    click: () => {
+      ensureConfig();
+      shell.openPath(Path.dirname(configPath));
+    }
+  });
+
+  configItems.push({
     label: 'Reload config',
     click: () => {
       reload();
