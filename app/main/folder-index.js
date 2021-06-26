@@ -46,7 +46,7 @@ function expressIndex(root) {
             const file = {
                 name,
                 isDir: stat.isDirectory(),
-                ctime: stat.ctime.getTime(),
+                ctime: stat.mtimeMs,
                 size: stat.size,
             };
 
